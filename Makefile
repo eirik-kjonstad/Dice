@@ -12,7 +12,7 @@ LIB_MKL = -lblas -llapack #-L$(MKL)/lib/intel64/ -lmkl_intel_ilp64 -lmkl_gnu_thr
 INCLUDE_BOOST = -I$(BOOST)/include #-I$(BOOST)
 LIB_BOOST = -L$(BOOST)/lib -L$(BOOST)/stage/lib
 
-INCLUDE_HDF5 = -I$(HDF5)/include
+INCLUDE_HDF5 = -I$(HDF5)/include -I /usr/include/hdf5/serial
 LIB_HDF5 = -L$(HDF5)/lib -lhdf5
 
 COMPILE_NUMERIC = no
