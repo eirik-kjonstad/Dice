@@ -1,5 +1,5 @@
 USE_INTEL = no
-HAS_AVX2 = yes
+HAS_AVX2 = no
 
 BOOST=${BOOST_ROOT}
 EIGEN=./eigen/

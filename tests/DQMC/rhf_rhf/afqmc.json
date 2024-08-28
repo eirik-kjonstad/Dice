@@ -10,9 +10,9 @@
     "seed": 4321,
     "phaseless": true,
     "dt": 0.005,
-    "nsteps": 50,
+    "nsteps": 200,
     "nwalk": 20,
-    "stochasticIter": 50,
+    "stochasticIter": 200,
     "choleskyThreshold": 0.001,
     "orthoSteps": 20
   },

@@ -21,13 +21,13 @@ print(json.dumps(d, indent=2))
   
 numCore = d['system'].get('numCore',0)
 
-if d['wavefunction']['left'] == 'multislater':
-  Acre, Ades, Bcre, Bdes, coeff = \
-    QMCUtils.getExcitation(numCore, d['wavefunction']['determinants'], d['wavefunction']['ndets'])
+#if d['wavefunction']['left'] == 'multislater':
+#  Acre, Ades, Bcre, Bdes, coeff = \
+#    QMCUtils.getExcitation(numCore, d['wavefunction']['determinants'], d['wavefunction']['ndets'])
 
-ndets = np.sum(np.asarray([c.shape[0] for c in coeff.values()]))
-print("Num determinants: ", ndets)
-excitations = [ Acre, Ades, Bcre, Bdes, coeff]
+#ndets = np.sum(np.asarray([c.shape[0] for c in coeff.values()]))
+#print("Num determinants: ", ndets)
+#excitations = [ Acre, Ades, Bcre, Bdes, coeff]
 
 norb = nmo
 nelec = nelec // 2
@@ -49,8 +49,8 @@ nclub = 1 #d['sampling']['orthoSteps']
 import time
 init = time.time()
 comm.Barrier()
-#ph_afqmc.run_afqmc(h0, h1, chol, nelec, dt, nwalkers, nsteps, nblocks, seed=seed, neql=1, rdmQ=False, nclub=nclub)
-ph_afqmc_MultiSlater.run_afqmc(h0, h1, chol, nelec, dt, nwalkers, nsteps, excitations, nblocks, seed=seed, neql=1, rdmQ=False, nclub=nclub)
+ph_afqmc.run_afqmc(h0, h1, chol, nelec, dt, nwalkers, nsteps, nblocks, seed=seed, neql=1, rdmQ=False, nclub=nclub)
+#ph_afqmc_MultiSlater.run_afqmc(h0, h1, chol, nelec, dt, nwalkers, nsteps, excitations, nblocks, seed=seed, neql=1, rdmQ=False, nclub=nclub)
 comm.Barrier()
 end = time.time()
 if rank == 0:

@@ -1,5 +1,6 @@
 import os, time
 import numpy as np
+import scipy
 from numpy.random import Generator, MT19937, PCG64
 import scipy as sp
 os.environ['XLA_FLAGS'] = '--xla_force_host_platform_device_count=1 --xla_cpu_multi_thread_eigen=false intra_op_parallelism_threads=1'
@@ -179,7 +180,7 @@ def calc_energy(h0, rot_h1, rot_chol, walker):
   c = vmap(jnp.trace)(f)
   exc = jnp.sum(vmap(lambda x: x * x.T)(f))
   ene2 = 2. * jnp.sum(c * c) - exc
-  return ene2 + ene1 + ene0
+  return ene2 + ene1 + ene0 - 16.0
 
 calc_energy_vmap = vmap(calc_energy, in_axes = (None, None, None, 0))
 
@@ -193,14 +194,17 @@ def apply_propagator(exp_h1, vhs_i, walker_i):
     carry = vhs_i.dot(carry)
     return carry, carry
   _, vhs_n_walker = lax.scan(scanned_fun, walker_i, jnp.arange(1, 6))
-  walker_i = walker_i + jnp.sum(jnp.stack([ vhs_n_walker[n] / np.math.factorial(n+1) for n in range(5) ]), axis=0)
+  walker_i = walker_i + jnp.sum(jnp.stack([ vhs_n_walker[n] / scipy.special.factorial(n+1) for n in range(5) ]), axis=0)
   walker_i = exp_h1.dot(walker_i)
   return walker_i
 
 #@checkpoint
 @jit
 def apply_propagator_vmap(exp_h1, chol, dt, walkers, fields):
-  vhs = 1.j * jnp.sqrt(dt) * fields.dot(chol).reshape(walkers.shape[0], walkers.shape[1], walkers.shape[1])
+  # EFK remove 1j in propagator
+  vhs = jnp.sqrt(dt) * fields.dot(chol).reshape(walkers.shape[0], walkers.shape[1], walkers.shape[1])
+  # end EFK
+  #vhs = 1.j * jnp.sqrt(dt) * fields.dot(chol).reshape(walkers.shape[0], walkers.shape[1], walkers.shape[1])
   return vmap(apply_propagator, in_axes = (None, 0, 0))(exp_h1, vhs, walkers)
 
 
@@ -260,7 +264,10 @@ def propagate_phaseless(h0_prop, h0, h1, chol, rot_chol, dt, walkers, weights, e
     imp_fun_phaseless = jnp.where(imp_fun_phaseless < 1.e-3, 0., imp_fun_phaseless)
     imp_fun_phaseless = jnp.where(imp_fun_phaseless > 100., 0., imp_fun_phaseless)
     imp_fun_phaseless = jnp.where(jnp.isnan(imp_fun_phaseless), 0., imp_fun_phaseless)
-    carry[1] = imp_fun_phaseless * carry[1]
+    # EFK
+    # remove phaseless approx
+    #carry[1] = imp_fun_phaseless * carry[1]
+    # end EFK
     carry[1] = jnp.where(carry[1] > 100., 0., carry[1])
     carry[2] = overlaps_new
     carry[3] = e_estimate - 0.1 * jnp.log(jnp.sum(carry[1]) / carry[0].shape[0]) / dt

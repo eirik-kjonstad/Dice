@@ -36,7 +36,7 @@ print(f'1e ene: {np.trace(np.dot(dm1, h1))}')
 dipole_fci = np.einsum('kij,ji->k', dip_ints_mo, dm1) + np.array(nuc_dipmom)
 print(f'dipole fci: {dipole_fci}', flush=True)
 
-#QMCUtils.run_afqmc(mf, nwalk_per_proc = 20, dt = 0.01, cholesky_threshold = 0., nblocks = 500)
+QMCUtils.run_afqmc(mf, nwalk_per_proc = 20, dt = 0.01, cholesky_threshold = 0., nblocks = 500)
 
 print("Calculating Cholesky integrals")
 h1e, chol, nelec, enuc = QMCUtils.generate_integrals(mol, mf.get_hcore(), mf.mo_coeff, 1.e-5)

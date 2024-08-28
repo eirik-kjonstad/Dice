@@ -7,11 +7,12 @@ MPICOMMAND="mpirun -np 4"
 DQMCPATH="../../../bin/DQMC afqmc.json"
 here=`pwd`
 tol=1.0e-6
-clean=1
+clean=0
 
 cd $here/DQMC/rhf_rhf
 ../../clean.sh
 printf "...running DQMC/rhf_rhf\n"
+echo "$MPICOMMAND $DQMCPATH > afqmc.out"
 $MPICOMMAND $DQMCPATH > afqmc.out
 python2 ../../testEnergy.py 'afqmc' $tol
 if [ $clean == 1 ]
