@@ -193,7 +193,7 @@ def apply_propagator(exp_h1, vhs_i, walker_i):
     carry = vhs_i.dot(carry)
     return carry, carry
   _, vhs_n_walker = lax.scan(scanned_fun, walker_i, jnp.arange(1, 6))
-  walker_i = walker_i + jnp.sum(jnp.stack([ vhs_n_walker[n] / np.math.factorial(n+1) for n in range(5) ]), axis=0)
+  walker_i = walker_i + jnp.sum(jnp.stack([ vhs_n_walker[n] / sp.special.factorial(n+1) for n in range(5) ]), axis=0)
   walker_i = exp_h1.dot(walker_i)
   return walker_i
 
